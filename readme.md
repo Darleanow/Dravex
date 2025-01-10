@@ -1,3 +1,5 @@
+![Logo](Assets/dravexNOBG_OnlyLogo.png)
+
 # Dravex
 
 Dravex is a generally purposed programming language.
