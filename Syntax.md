@@ -66,7 +66,7 @@ DynArray<int> arr = DynArray::new();  // Similaire à std::vector
 ### Manipulation bas niveau
 
 ```dravex
-unsafe fn write_memory(addr: int *unsafe, value: int)
+unsafe fn write_memory(int *unsafe addr, int value)
 {
     // Implem
 }
@@ -102,7 +102,7 @@ struct PhysAddr(int);
 struct VirtAddr(int);
 
 fn allocate_page() -> Result<PhysAddr>;
-fn map_page(phys: PhysAddr, virt: VirtAddr);
+fn map_page(PhysAddr phys, VirtAddr virt);
 ```
 
 ## Structures et Objets
@@ -167,12 +167,12 @@ import std::io;
 import std::fs::File;
 
 module math {
-    int add(int a, int b);
-    int sub(int a, int b);
+    fn add(int a, int b) -> int;
+    fn sub(int a, int b) -> int;
 }
 
 // Exports
-pub int calculate(int x) {
+pub fn calculate(int x) -> int {
     return x *! 2;
 }
 ```
