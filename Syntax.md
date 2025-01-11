@@ -1,186 +1,178 @@
-# Dravex
+# Dravex - Spécification du langage
 
-1. VARIABLES & TYPES DE BASE ⇒ VALIDEE
+## Types fondamentaux et Variables
 
-```
-// Déclaration de variables
+### Déclaration basique
+
+```dravex
+// Types primitifs
 int x = 42;
 float y = 3.14;
 char c = 'a';
 bool b = true;
-
-// Pointeurs
-int *p = x;
-readonly int *p = x; // CONST
-@p = 100; // Ecriture propre
-int value = @p;
-
-// Tableaux avec ptrs
-array<int, 5> arr;
-arr[0] = 42; // Ecrit a l'indexe 0
-int val = arr[0]%; // Récup l'indexe 0, si vide, on peut utiliser les operateurs safes
-
-// EXEMPLE LECTURE UNSET
-int val =  arr[0]!; // Panic
-int val = arr[0]%; // valeur par défaut, genre 0 pour int
-
-// Ecriture si null ?
-@p = 100!; // Panic si P null
-@p = 100%; // Ne fait rien si p null
-
-// Access si null ?
-if (ptr%)
-{
-	int x = 10;
-}
 ```
 
-1. STRUCTURES
+### Fonctions
 
-```
-struct Point {
-    int x;
-    int y;
-};
-
-Point p = Point(10,20); // Par ordre de déclaration
-
-// Annotations sur les types 
-struct Point {
-	@positve int x;
-	@positive int y;
-	
-	fn distance(Point other) -> float {
-		return sqrt((self.x - other.x)^2 + (self.y - other.y)^2);
-	};
-};
-```
-
-1. TABLEAUX
-
-```
-// Tableau fixe
-int[5] arr = [1, 2, 3, 4, 5];
-
-// Accès
-int x = arr[0];
-arr[1] = 42;
-
-// Liste chaînée
-List<int> list = List::new();
-```
-
-1. FONCTIONS
-
-```
-int add(int a, int b) {
-    return a +! b;  // Overflow check obligatoire
+```dravex
+fn add(int a, int b) -> int {
+    return a+!b;
 }
 
-// Génériques
-T max<T>(T a, T b) {
-    if a > b {
+fn max<T>(T a, T b) -> T {
+    if (a > b)
+    {
         return a;
     }
+
     return b;
 }
 ```
 
-1. CONTRÔLE DE FLUX
+### Pointeurs et Gestion de la mémoire
 
+```dravex
+// Pointeurs basiques
+int *p = x;
+readonly int *p = x;  // Pointeur constant
+
+// Opérateurs de déréférencement
+@p = 100;            // Écriture propre
+int value = @p;      // Lecture
+
+// Gestion des valeurs nulles
+@p = 100!;          // Panique si p est null
+@p = 100%;          // Ignore si p est null
+if (ptr%) { ... }   // Vérification de null
 ```
-if (x > 0) {
-    int y = x + 1;
-} else {
-    int y = x - 1;
+
+### Tableaux et Collections
+
+```dravex
+// Tableaux statiques
+array<int, 5> arr;
+int[5] arr = [1, 2, 3, 4, 5];
+
+// Accès sécurisé
+arr[0] = 42;                // Écriture standard
+int val = arr[0]%;          // Lecture avec valeur par défaut
+int val = arr[0]!;          // Lecture avec panique si non défini
+
+// Collections dynamiques
+List<int> list = List::new();
+DynArray<int> arr = DynArray::new();  // Similaire à std::vector
+```
+
+### Manipulation bas niveau
+
+```dravex
+unsafe fn write_memory(addr: int *unsafe, value: int)
+{
+    // Implem
+}
+```
+
+### Primitives de synchro
+
+```dravex
+struct Mutex<T> {
+    fn lock() -> T;
+    fn unlock();
 }
 
-while (x > 0) {
-    x = x -! 1; // ! ==> crash on err
-}
+atomic<T> value; // Opérations atomiques
+```
 
-for (i in 1..10) {
-    int val = i *! 2;
+### Relatif au HW
+
+```dravex
+reg32 status_register; // 32 bits
+port16 keyboard_port;
+
+#[interrupt]
+fn keyboard_handler() {
+    // Implem
 }
 ```
 
-1. MODULES
+### Allocation bas niveau
 
+```dravex
+struct PhysAddr(int);
+struct VirtAddr(int);
+
+fn allocate_page() -> Result<PhysAddr>;
+fn map_page(phys: PhysAddr, virt: VirtAddr);
 ```
+
+## Structures et Objets
+
+### Définition de base
+
+```dravex
+struct Point {
+    int x;
+    int y;
+
+    fn distance(Point other) -> float {
+        return sqrt((self.x - other.x)^2 + (self.y - other.y)^2);
+    }
+}
+
+// Instanciation
+Point p = Point(10, 20);  // Construction par ordre de déclaration
+```
+
+## Opérateurs et Gestion des Erreurs
+
+### Opérateurs arithmétiques sécurisés
+
+```dravex
+// Overflow handling
+int a = x +! y;  // Panique sur overflow
+int b = x +% y;  // Wrap sur overflow
+int c = x +| y;  // Saturation sur overflow
+
+// Autres opérations
+int d = x *! y;  // Multiplication
+int e = x -! y;  // Soustraction
+int f = x /! y;  // Division
+```
+
+## Annotations et Validation
+
+### Validateurs de type
+
+```dravex
+// Annotations numériques
+@positive int count = 42;
+@range(0..100) int percent = 75;
+@prec(2) float price;      // Précision décimale
+@mult(2) int evenNumber;   // Multiple de 2
+@div(2) int halfNumber;    // Divisible par 2
+
+// Annotations textuelles
+@range("a", "z") char lowercase;
+@in("Hello", "World") string greeting;
+@inre([a-zA-Z]+) string alphaOnly;
+```
+
+## Modules et Organisation du Code
+
+### Import et Export
+
+```dravex
+// Imports
+import std::io;
+import std::fs::File;
+
 module math {
     int add(int a, int b);
     int sub(int a, int b);
 }
 
-import std::io;
-import std::fs::File;
-
-// Export
+// Exports
 pub int calculate(int x) {
     return x *! 2;
 }
-```
-
-1. ANNOTATIONS DE SÉCURITÉ
-
-```
-@positive int count = 42;
-@range(0..100) int percent = 75;
-```
-
-1. OPÉRATEURS AVEC GESTION D'OVERFLOW
-
-```
-int a = x +! y;  // Panic on overflow
-int b = x +% y;  // Wrap on overflow
-int c = x +| y;  // Saturate on overflow
-
-// Pour multiplication, soustraction, division
-int d = x *! y;
-int e = x -! y;
-int f = x /! y;
-```
-
-1. CONSTANTES
-
-```
-const int VERSION = 1;
-const float PI = 3.14;
-```
-
-1. ALLOCATION SÉCURISÉE
-
-```
-// Tableau dynamique
-DynArray<int> arr = DynArray::new();  // Comme un vector C++
-arr.push(42);
-
-// Allocation simple mais sécurisée
-SafePtr<int> ptr = SafePtr::new();    // Vérifie les nulls automatiquement
-```
-
-1. TYPES GÉNÉRIQUES (basiques)
-
-```
-// Juste pour les containers standards
-DynArray<int> numbers;
-DynArray<float> values;
-
-// Et quelques structures simples
-Pair<int, float> p;
-```
-
-1. VALIDATEURS
-
-```
-@positive
-@negative
-@range(0..100)
-@range("a", "z")
-@in("Hello","World")
-@nin("Hello","World")
-@inre([a-zA-Z]+)
-@prec(2) // bounding float
-@mult(2) // Multiple de 2
-@div(2) // Division entière par 2
 ```
