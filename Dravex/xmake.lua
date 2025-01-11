@@ -3,7 +3,7 @@ add_rules("mode.debug", "mode.release")
 target("Dravex")
     set_kind("binary")
     add_files("src/*.c")
-
+    add_includedirs("include")
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
 --
@@ -56,8 +56,6 @@ target("Dravex")
 --    -- set optimization: none, faster, fastest, smallest
 --    set_optimize("fastest")
 --
---    -- add include search directories
---    add_includedirs("/usr/include", "/usr/local/include")
 --
 --    -- add link libraries and search directories
 --    add_links("tbox")
