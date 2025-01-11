@@ -1,6 +1,6 @@
-![Logo](DravexLogo.png)
-
 # Dravex
+
+![Logo](DravexLogo.png)
 
 Dravex is a generally purposed programming language.
 
