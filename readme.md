@@ -1,4 +1,4 @@
-![Logo](Assets/dravexNOBG_OnlyLogo.png)
+![Logo](DravexLogo.png)
 
 # Dravex
 
