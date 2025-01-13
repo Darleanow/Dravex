@@ -131,7 +131,6 @@ Point p = Point(10, 20);  // Construction par ordre de déclaration
 // Overflow handling
 int a = x +! y;  // Panique sur overflow
 int b = x +% y;  // Wrap sur overflow
-int c = x +| y;  // Saturation sur overflow
 
 // Autres opérations
 int d = x *! y;  // Multiplication
