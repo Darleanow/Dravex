@@ -1,0 +1,51 @@
+stateDiagram-v2
+    [*] --> START
+    START --> IDENTIFIER: letter
+    START --> NUMBER: digit
+    START --> OPERATOR: + - * / = > < ! % @ ^
+    START --> STRING: "
+    START --> CHAR: '
+    START --> START: whitespace
+    START --> COMMENT: /
+    
+    IDENTIFIER --> IDENTIFIER: letter/digit/_
+    IDENTIFIER --> START: whitespace/delimiter/operator
+    IDENTIFIER --> TEMPLATE: <
+    
+    NUMBER --> NUMBER: digit
+    NUMBER --> DECIMAL: .
+    NUMBER --> START: whitespace/delimiter/operator
+    
+    DECIMAL --> DECIMAL_NUMBER: digit
+    DECIMAL_NUMBER --> DECIMAL_NUMBER: digit
+    DECIMAL_NUMBER --> START: whitespace/delimiter/operator
+    
+    OPERATOR --> START: whitespace/delimiter
+    OPERATOR --> COMPOUND_OPERATOR: = ! %
+    COMPOUND_OPERATOR --> START: whitespace/delimiter
+    
+    STRING --> STRING: any except "
+    STRING --> START: "
+    
+    CHAR --> CHAR_END: any
+    CHAR_END --> START: '
+    
+    COMMENT --> LINE_COMMENT: /
+    LINE_COMMENT --> LINE_COMMENT: any except \n
+    LINE_COMMENT --> START: \n
+    
+    TEMPLATE --> TEMPLATE_CONTENT: any except >
+    TEMPLATE_CONTENT --> START: >
+    
+    note right of START
+        Special tokens:
+        fn, struct, module,
+        pub, unsafe, import
+    end note
+    
+    note right of OPERATOR
+        Special operators:
+        +! -! *! /! 
+        +% -% *% /%
+        @ ! % ^
+    end note
