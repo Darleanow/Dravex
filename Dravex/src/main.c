@@ -1,11 +1,16 @@
 #include <stdio.h>
-#include "testf.h"
+
+#include "cli/cli.h"
 
 int main(int argc, char **argv)
 {
-    printf("hello world!\n");
+    config_t config;
 
-    printf("2.2 * 5.5 = %f\n", mult(2.2, 5.5));
+    if (!cli_parse_arguments(argc, argv, &config))
+    {
+        fprintf(stderr, "Error: Failed to parse arguments\n");
+        return -1;
+    }
 
     return 0;
 }
